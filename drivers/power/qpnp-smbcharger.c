@@ -6143,9 +6143,6 @@ static void smbchg_external_power_changed(struct power_supply *psy)
 		usb_type_check_work_fn(chip);
 	}
 
-	if (usb_supply_type != POWER_SUPPLY_TYPE_USB)
-		goto  skip_current_for_non_sdp;
-
 	if (chip->bms_psy_name)
 		chip->bms_psy =
 			power_supply_get_by_name((char *)chip->bms_psy_name);
