@@ -416,9 +416,7 @@ KBUILD_CPPFLAGS := -D__KERNEL__ $(CLANG_FLAGS)
 
 KBUILD_CFLAGS   := -Wno-strict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
-		   -Wno-implicit-function-declaration \
 		   -Wno-format-security \
-		   -Wno-maybe-uninitialized \
 		   -std=gnu89 $(CLANG_FLAGS) -w
 
 KBUILD_AFLAGS_KERNEL :=
