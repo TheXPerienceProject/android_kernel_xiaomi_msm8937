@@ -295,32 +295,6 @@ PopulateDot11fCapabilities2(tpAniSirGlobal         pMac,
 
 } // End PopulateDot11fCapabilities2.
 
-void populate_dot11f_ext_chann_switch_ann(tpAniSirGlobal mac_ctx,
-            tDot11fIEext_chan_switch_ann *dot_11_ptr, tpPESession session_entry)
-{
-   offset_t ch_offset;
-
-   if (session_entry->gLimChannelSwitch.secondarySubBand >=
-       PHY_QUADRUPLE_CHANNEL_20MHZ_LOW_40MHZ_CENTERED)
-         ch_offset = BW80;
-   else
-         ch_offset = session_entry->gLimChannelSwitch.secondarySubBand;
-
-   dot_11_ptr->switch_mode = session_entry->gLimChannelSwitch.switchMode;
-   dot_11_ptr->new_reg_class = limGetOPClassFromChannel(
-         mac_ctx->scan.countryCodeCurrent,
-         session_entry->gLimChannelSwitch.primaryChannel, ch_offset);
-   dot_11_ptr->new_channel = session_entry->gLimChannelSwitch.primaryChannel;
-   dot_11_ptr->switch_count = session_entry->gLimChannelSwitch.switchCount;
-   dot_11_ptr->present = 1;
-
-   limLog(mac_ctx, LOG1, FL("country:%s cb mode:%d width:%d reg:%d off:%d"),
-          mac_ctx->scan.countryCodeCurrent,
-          session_entry->gLimChannelSwitch.primaryChannel,
-          session_entry->gLimChannelSwitch.secondarySubBand,
-          dot_11_ptr->new_reg_class, ch_offset);
-}
-
 void
 PopulateDot11fChanSwitchAnn(tpAniSirGlobal          pMac,
                             tDot11fIEChanSwitchAnn *pDot11f,
@@ -334,8 +308,8 @@ PopulateDot11fChanSwitchAnn(tpAniSirGlobal          pMac,
 } // End PopulateDot11fChanSwitchAnn.
 
 void
-PopulateDot11fsecChanOffset(tpAniSirGlobal pMac,
-                               tDot11fIEsec_chan_offset *pDot11f,
+PopulateDot11fExtChanSwitchAnn(tpAniSirGlobal pMac,
+                               tDot11fIEExtChanSwitchAnn *pDot11f,
                                tpPESession psessionEntry)
 {
     //Has to be updated on the cb state basis
@@ -355,9 +329,6 @@ PopulateDot11fWiderBWChanSwitchAnn(tpAniSirGlobal pMac,
     pDot11f->newChanWidth = psessionEntry->gLimWiderBWChannelSwitch.newChanWidth;
     pDot11f->newCenterChanFreq0 = psessionEntry->gLimWiderBWChannelSwitch.newCenterChanFreq0;
     pDot11f->newCenterChanFreq1 = psessionEntry->gLimWiderBWChannelSwitch.newCenterChanFreq1;
-    limLog(pMac, LOG1, FL("wrapper: width:%d f0:%d f1:%d"),
-           pDot11f->newChanWidth, pDot11f->newCenterChanFreq0,
-           pDot11f->newCenterChanFreq1);
 }
 #endif
 
@@ -2306,21 +2277,14 @@ tSirRetStatus sirConvertProbeFrame2Struct(tpAniSirGlobal       pMac,
     {
         pProbeResp->channelSwitchPresent = 1;
         vos_mem_copy( &pProbeResp->channelSwitchIE, &pr->ChanSwitchAnn,
-                       sizeof(tDot11fIEChanSwitchAnn) );
+                       sizeof(tDot11fIEExtChanSwitchAnn) );
     }
 
-       if ( pr->sec_chan_offset.present )
+       if ( pr->ExtChanSwitchAnn.present )
     {
-        pProbeResp->sec_chan_offset_present = 1;
-        vos_mem_copy ( &pProbeResp->sec_chan_offset, &pr->sec_chan_offset,
-                       sizeof(tDot11fIEsec_chan_offset) );
-    }
-    if (pr->ext_chan_switch_ann.present)
-    {
-        pProbeResp->ecsa_present = 1;
-        vos_mem_copy(&pProbeResp->ext_chan_switch_ann,
-                     &pr->ext_chan_switch_ann,
-                     sizeof(tDot11fIEext_chan_switch_ann));
+        pProbeResp->extChannelSwitchPresent = 1;
+        vos_mem_copy ( &pProbeResp->extChannelSwitchIE, &pr->ExtChanSwitchAnn,
+                       sizeof(tDot11fIEExtChanSwitchAnn) );
     }
 
     if( pr->TPCReport.present)
@@ -3454,18 +3418,11 @@ sirParseBeaconIE(tpAniSirGlobal        pMac,
                       sizeof(tDot11fIEChanSwitchAnn));
     }
 
-    if ( pBies->sec_chan_offset.present)
+    if ( pBies->ExtChanSwitchAnn.present)
     {
-        pBeaconStruct->sec_chan_offset_present= 1;
-        vos_mem_copy( &pBeaconStruct->sec_chan_offset, &pBies->sec_chan_offset,
-                      sizeof(tDot11fIEsec_chan_offset));
-    }
-    if (pBies->ext_chan_switch_ann.present)
-    {
-        pBeaconStruct->ecsa_present = 1;
-        vos_mem_copy(&pBeaconStruct->ext_chan_switch_ann,
-                     &pBies->ext_chan_switch_ann,
-                     sizeof(tDot11fIEext_chan_switch_ann));
+        pBeaconStruct->extChannelSwitchPresent= 1;
+        vos_mem_copy( &pBeaconStruct->extChannelSwitchIE, &pBies->ExtChanSwitchAnn,
+                      sizeof(tDot11fIEExtChanSwitchAnn));
     }
 
     if ( pBies->Quiet.present )
@@ -3708,18 +3665,12 @@ sirConvertBeaconFrame2Struct(tpAniSirGlobal       pMac,
         vos_mem_copy( &pBeaconStruct->channelSwitchIE, &pBeacon->ChanSwitchAnn,
                                                        sizeof(tDot11fIEChanSwitchAnn) );
     }
-    if ( pBeacon->sec_chan_offset.present )
+
+    if ( pBeacon->ExtChanSwitchAnn.present )
     {
-        pBeaconStruct->sec_chan_offset_present = 1;
-        vos_mem_copy(&pBeaconStruct->sec_chan_offset, &pBeacon->sec_chan_offset,
-                      sizeof(tDot11fIEsec_chan_offset));
-    }
-    if (pBeacon->ext_chan_switch_ann.present)
-    {
-        pBeaconStruct->ecsa_present = 1;
-        vos_mem_copy(&pBeaconStruct->ext_chan_switch_ann,
-                     &pBeacon->ext_chan_switch_ann,
-                     sizeof(tDot11fIEext_chan_switch_ann));
+        pBeaconStruct->extChannelSwitchPresent = 1;
+        vos_mem_copy( &pBeaconStruct->extChannelSwitchIE, &pBeacon->ExtChanSwitchAnn,
+                                                       sizeof(tDot11fIEExtChanSwitchAnn) );
     }
 
     if( pBeacon->TPCReport.present)
