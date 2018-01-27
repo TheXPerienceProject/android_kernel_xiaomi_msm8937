@@ -5368,7 +5368,7 @@ void WDA_DelSTASelfReqCallback(WDI_Status   wdiStatus,
    tDelStaSelfParams     *delStaSelfParams;
    
    VOS_TRACE(VOS_MODULE_ID_WDA, VOS_TRACE_LEVEL_INFO,
-             "<------ %s, wdiStatus: %d pWdaParams: %p",
+             "<------ %s, wdiStatus: %d pWdaParams: %pK",
               __func__, wdiStatus, pWdaParams); 
 
    if (NULL == pWdaParams)
@@ -13474,7 +13474,7 @@ void WDA_FTMCommandReqCallback(void *ftmCmdRspData,
    if((NULL == pWDA) || (NULL == ftmCmdRspData))
    {
       VOS_TRACE(VOS_MODULE_ID_WDA, VOS_TRACE_LEVEL_ERROR,
-                "%s, invalid input %p, %p",__func__,  pWDA, ftmCmdRspData);
+                "%s, invalid input %pK, %pK",__func__,  pWDA, ftmCmdRspData);
       return;
    }
    /* Release Current FTM Command Request */
@@ -14014,8 +14014,9 @@ void WDA_HALDumpCmdCallback(WDI_HALDumpCmdRspParamsType *wdiRspParams,
       return ;
    }
 
-   VOS_TRACE( VOS_MODULE_ID_WDA, VOS_TRACE_LEVEL_INFO,
-              "%s: WDA HAL DUMP Resp Received",__func__);
+   VOS_TRACE(VOS_MODULE_ID_WDA, VOS_TRACE_LEVEL_INFO,
+             "%s: WDA HALDUMP Rsp Received async: %d",
+             __func__, pWdaParams->wdaHALDumpAsync);
 
    pWDA = pWdaParams->pWdaContext;
    buffer = (tANI_U8 *)pWdaParams->wdaMsgParam;
@@ -14073,6 +14074,15 @@ VOS_STATUS WDA_HALDumpCmdReq(tpAniSirGlobal   pMac, tANI_U32  cmd,
                            "%s: WDA Context Null", __func__);
       return VOS_STATUS_E_RESOURCES;
    }
+
+   vStatus = vos_event_reset(&(pVosContext->wdaCompleteEvent));
+   if (VOS_STATUS_SUCCESS != vStatus)
+   {
+      VOS_TRACE(VOS_MODULE_ID_WDA, VOS_TRACE_LEVEL_ERROR,
+                "%s: Event reset failed - status %d", __func__, vStatus);
+      return VOS_STATUS_E_FAILURE;
+   }
+
    pWdaParams = (tWDA_HalDumpReqParams *)vos_mem_malloc(sizeof(tWDA_HalDumpReqParams)) ;
    if(NULL == pWdaParams)
    {
@@ -14724,7 +14734,7 @@ VOS_STATUS WDA_TxComplete( v_PVOID_t pVosContext, vos_pkt_t *pData,
       else
       {
          VOS_TRACE( VOS_MODULE_ID_WDA, VOS_TRACE_LEVEL_WARN,
-                           "%s:packet (%p) is already freed",
+                           "%s:packet (%pK) is already freed",
                            __func__, pData);
          //Return from here since we reaching here because the packet already timeout
          vos_lock_release(&wdaContext->mgmt_pkt_lock);
@@ -14734,7 +14744,7 @@ VOS_STATUS WDA_TxComplete( v_PVOID_t pVosContext, vos_pkt_t *pData,
    else {
       wdaContext->mgmt_pktfree_fail++;
       VOS_TRACE( VOS_MODULE_ID_WDA, VOS_TRACE_LEVEL_ERROR,
-                            "%s:packet (%p)  userData (%lx) is not freed",
+                            "%s:packet (%pK)  userData (%lx) is not freed",
                             __func__, pData, uUserData);
    }
    vos_lock_release(&wdaContext->mgmt_pkt_lock);
@@ -14783,14 +14793,14 @@ VOS_STATUS WDA_TxPacket(tWDA_CbContext *pWDA,
    if((NULL == pWDA)||(NULL == pFrmBuf)) 
    {
       VOS_TRACE( VOS_MODULE_ID_WDA, VOS_TRACE_LEVEL_ERROR,
-                           "%s:pWDA %p or pFrmBuf %p is NULL",
+                           "%s:pWDA %pK or pFrmBuf %pK is NULL",
                            __func__,pWDA,pFrmBuf); 
       VOS_ASSERT(0);
       return VOS_STATUS_E_FAILURE;
    }
 
    VOS_TRACE( VOS_MODULE_ID_WDA, VOS_TRACE_LEVEL_INFO_HIGH, 
-               "Tx Mgmt Frame Subtype: %d alloc(%p) txBdToken = %u",
+               "Tx Mgmt Frame Subtype: %d alloc(%pK) txBdToken = %u",
                pFc->subType, pFrmBuf, txBdToken);
    pMac = (tpAniSirGlobal )VOS_GET_MAC_CTXT(pWDA->pVosContext);
    if(NULL == pMac)
