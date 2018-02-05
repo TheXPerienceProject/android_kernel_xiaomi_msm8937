@@ -59,7 +59,6 @@ static int parse_options(struct super_block *sb, char *options, int silent,
 
 	/* by default, we use AID_MEDIA_RW as uid, gid */
 	opts->fs_low_uid = AID_MEDIA_RW;
-	opts->fs_low_gid = AID_MEDIA_RW;
 	vfsopts->mask = 0;
 	opts->multiuser = false;
 	opts->fs_user_id = 0;
