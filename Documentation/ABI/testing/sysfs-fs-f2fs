@@ -112,8 +112,6 @@ Date:		January 2016
 Contact:	"Shuoran Liu" <liushuoran@huawei.com>
 Description:
 		 Shows total written kbytes issued to disk.
-<<<<<<< HEAD
-=======
 
 What:		/sys/fs/f2fs/<disk>/inject_rate
 Date:		May 2016
@@ -132,4 +130,4 @@ Date:		June 2017
 Contact:	"Chao Yu" <yuchao0@huawei.com>
 Description:
 		 Controls current reserved blocks in system.
->>>>>>> ae105fc... f2fs: introduce reserved_blocks in sysfs
+
