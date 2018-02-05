@@ -14,6 +14,8 @@
 #include "f2fs.h"
 #include "node.h"
 
+#define MAX_TRACE_PATHBUF_LEN	256
+
 bool f2fs_may_inline_data(struct inode *inode)
 {
 	if (f2fs_is_atomic_file(inode))
