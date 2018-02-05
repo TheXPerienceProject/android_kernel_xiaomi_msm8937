@@ -22,6 +22,7 @@
 #include <linux/vmalloc.h>
 #include <linux/bio.h>
 #include <linux/blkdev.h>
+#include <linux/quotaops.h>
 #ifdef CONFIG_F2FS_FS_ENCRYPTION
 #include <linux/fscrypt_supp.h>
 #else
