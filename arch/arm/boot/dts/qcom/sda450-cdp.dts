@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, 2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -11,23 +11,21 @@
  * GNU General Public License for more details.
  */
 
-&int_codec {
-	status = "okay";
-	qcom,msm-hs-micbias-type = "external";
+/dts-v1/;
+
+#include "sda450.dtsi"
+#include "msm-pmi8950.dtsi"
+#include "msm8953-cdp.dtsi"
+#include "msm8953-pmi8950.dtsi"
+#include "msm8953-camera-sensor-cdp.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. SDA450 + PMI8950 CDP";
+	compatible = "qcom,sda450-cdp", "qcom,sda450", "qcom,cdp";
+	qcom,board-id= <1 0>;
 };
 
-&pm8953_diangu_dig {
-	status = "okay";
-};
-
-&pm8953_diangu_analog {
-	status = "okay";
-};
-
-&wsa881x_i2c_f {
-	status = "okay";
-};
-
-&wsa881x_i2c_45 {
-	status = "okay";
+&pmi8950_charger {
+	qcom,external-typec;
+	qcom,typec-psy-name = "typec";
 };

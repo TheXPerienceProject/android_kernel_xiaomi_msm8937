@@ -1,4 +1,4 @@
-/* Copyright (c) 2014-2017 The Linux Foundation. All rights reserved.
+/* Copyright (c) 2014-2018 The Linux Foundation. All rights reserved.
  * Copyright (C) 2017 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -4696,9 +4696,10 @@ static int smbchg_set_optimal_charging_mode(struct smbchg_chip *chip, int type)
 static int smbchg_change_usb_supply_type(struct smbchg_chip *chip,
 						enum power_supply_type type)
 {
-	int rc;
+	int rc, current_limit_ma;
 	// default to DEFAULT_SDP_MA
-	int current_limit_ma = DEFAULT_SDP_MA;
+	//int current_limit_ma = DEFAULT_SDP_MA; old (?)
+	union power_supply_propval propval;
 
 	/*
 	 * if the type is not unknown, set the type before changing ICL vote
@@ -4737,8 +4738,12 @@ static int smbchg_change_usb_supply_type(struct smbchg_chip *chip,
 		goto out;
 	}
 
-	if (!chip->skip_usb_notification)
-		power_supply_set_supply_type(chip->usb_psy, type);
+	if (!chip->skip_usb_notification) {
+		propval.intval = type;
+		chip->usb_psy->set_property(chip->usb_psy,
+				POWER_SUPPLY_PROP_REAL_TYPE,
+				&propval);
+	}
 
 	/*
 	 * otherwise if it is unknown, remove vote
@@ -6182,7 +6187,7 @@ static void smbchg_external_power_changed(struct power_supply *psy)
 		current_limit = prop.intval / 1000;
 
 	rc = chip->usb_psy->get_property(chip->usb_psy,
-				POWER_SUPPLY_PROP_TYPE, &prop);
+				POWER_SUPPLY_PROP_REAL_TYPE, &prop);
 
 	read_usb_type(chip, &usb_type_name, &usb_supply_type);
 
