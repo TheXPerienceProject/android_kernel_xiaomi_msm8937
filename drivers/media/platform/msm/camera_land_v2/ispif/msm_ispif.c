@@ -1,8 +1,4 @@
-<<<<<<< HEAD:drivers/media/platform/msm/camera_land_v2/ispif/msm_ispif.c
-/* Copyright (c) 2013-2016, The Linux Foundation. All rights reserved.
-=======
 /* Copyright (c) 2013-2018, The Linux Foundation. All rights reserved.
->>>>>>> LA.UM.6.6.r1-08900-89xx.0:drivers/media/platform/msm/camera_v2/ispif/msm_ispif_32.c
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -232,17 +228,15 @@ static int msm_ispif_reset_hw(struct ispif_device *ispif)
 	struct clk *reset_clk1[ARRAY_SIZE(ispif_8626_reset_clk_info)];
 	ispif->clk_idx = 0;
 
-<<<<<<< HEAD:drivers/media/platform/msm/camera_land_v2/ispif/msm_ispif.c
 	/* Turn ON VFE regulators before enabling the vfe clocks */
 	rc = msm_ispif_set_regulators(ispif->vfe_vdd, ispif->vfe_vdd_count, 1);
 	if (rc < 0)
 		return rc;
-=======
+
 	if (ispif->csid_version != CSID_VERSION_V37) {
 		pr_err("%s:%d  error returning\n", __func__, __LINE__);
 		return -EINVAL;
 	}
->>>>>>> LA.UM.6.6.r1-08900-89xx.0:drivers/media/platform/msm/camera_v2/ispif/msm_ispif_32.c
 
 	rc = msm_cam_clk_enable(&ispif->pdev->dev,
 		ispif_clk_info, ispif->clk,
@@ -1375,17 +1369,12 @@ static int msm_ispif_init(struct ispif_device *ispif,
 	}
 
 	rc = msm_ispif_reset_hw(ispif);
-<<<<<<< HEAD:drivers/media/platform/msm/camera_land_v2/ispif/msm_ispif.c
-	if (rc)
-		goto error_ahb;
 
-=======
 	if (rc < 0) {
 		pr_err("%s:%d  msm_ispif_reset_hw failed\n", __func__,
 			 __LINE__);
 		goto error_ahb;
 	}
->>>>>>> LA.UM.6.6.r1-08900-89xx.0:drivers/media/platform/msm/camera_v2/ispif/msm_ispif_32.c
 	rc = msm_ispif_reset(ispif);
 	if (rc == 0) {
 		ispif->ispif_state = ISPIF_POWER_UP;
