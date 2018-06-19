@@ -4476,6 +4476,12 @@ int sctp_do_peeloff(struct sock *sk, sctp_assoc_t id, struct socket **sockp)
 
 	/* Do not peel off from one netns to another one. */
 	if (!net_eq(current->nsproxy->net_ns, sock_net(sk)))
+<<<<<<< HEAD
+=======
+		return -EINVAL;
+
+	if (!asoc)
+>>>>>>> LA.UM.6.6.r1-08900-89xx.0
 		return -EINVAL;
 
 	if (!asoc)
