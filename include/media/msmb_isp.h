@@ -44,4 +44,6 @@ struct msm_isp32_event_data32 {
 	} u;
 };
 
-#endif
+#endif /* CONFIG_COMPAT */
+#endif /* __MSMB_ISP__ */
+#endif /* CONFIG_LAND_CAMERA */
