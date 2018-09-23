@@ -17,6 +17,7 @@
 #include "msm8937-camera-sensor-qrd-wt88537.dtsi"
 #include "dsi-panel-ili9881c-tianma-720p-video.dtsi"
 #include "general-pinctrl-land.dtsi"
+#include "display-land.dtsi"
 
 &soc {
 	led_flash0: qcom,camera-flash {

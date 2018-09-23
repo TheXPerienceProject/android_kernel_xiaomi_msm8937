@@ -11,6 +11,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include "dsi-panel-hx8394f-boe-720p-video.dtsi"
+#include "dsi-panel-nt35521s-ebbg-720p-video.dtsi"
+#include "dsi-panel-ili9881c-tianma-720p-video.dtsi"
 &soc {
 	mdss_mdp: qcom,mdss_mdp@1a00000 {
 

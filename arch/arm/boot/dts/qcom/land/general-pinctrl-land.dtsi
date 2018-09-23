@@ -144,3 +144,7 @@
 &qpdi {
 	qcom,pmic-carddetect-gpio = <&pm8937_gpios 0x2 0>;
 };
+
+&sdhc_1 {
+	qcom,vdd-always-on;
+};
