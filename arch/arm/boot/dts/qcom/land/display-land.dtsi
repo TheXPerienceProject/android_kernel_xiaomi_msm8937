@@ -23,4 +23,10 @@
 						<0x1706c 0x00000000>,
 						<0x2506c 0x00000000>;
 				};
+
+		qcom,ion-heap@21 {
+			reg = <21>;
+			qcom,ion-heap-type = "SYSTEM_CONTIG";
 		};
+
+	};
